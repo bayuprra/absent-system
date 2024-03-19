@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\KaryawanController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -29,4 +31,11 @@ Route::controller(PasswordController::class)->middleware('auth')->group(function
 
 Route::controller(DashboardController::class)->middleware('auth')->group(function () {
     Route::get('/dashboard', 'index')->name('dashboard');
+});
+
+Route::controller(KaryawanController::class)->middleware('auth')->group(function () {
+    Route::get('/karyawan', 'index')->name('karyawan');
+    Route::post('/karyawan', 'create')->name('createKaryawan');
+    Route::post('/updateKaryawan', 'update')->name('updateKaryawan');
+    Route::post('/deleteKaryawan', 'delete')->name('deleteKaryawan');
 });

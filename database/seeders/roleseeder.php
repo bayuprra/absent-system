@@ -18,12 +18,12 @@ class RoleSeeder extends Seeder
     {
         $data = [
             [
-                'nama'          => 'Owner',
+                'nama'          => 'Admin',
                 'created_at'    => Carbon::now()->format('Y-m-d H:i:s'),
                 'updated_at'    => Carbon::now()->format('Y-m-d H:i:s'),
             ],
             [
-                'nama'          => 'Admin',
+                'nama'          => 'karyawan',
                 'created_at'    => Carbon::now()->format('Y-m-d H:i:s'),
                 'updated_at'    => Carbon::now()->format('Y-m-d H:i:s'),
             ],
