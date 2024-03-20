@@ -21,11 +21,12 @@ class akunModel extends Authenticatable
         'password',
     ];
 
-    public function getAdminLoginData($account_id)
+    public function getLoginData($account_id)
     {
         return DB::table('akun')
             ->join('role', 'akun.role_id', '=', 'role.id')
-            ->select('akun.id', 'akun.username', 'akun.role_id', 'role.nama as nama_role')
+            ->leftJoin('karyawan', 'akun.id', '=', 'karyawan.akun_id')
+            ->select('akun.id', 'akun.username', 'akun.role_id', 'role.nama as nama_role', DB::raw('COALESCE(karyawan.id, 0) as iskaryawan'), 'karyawan.nama as namaKaryawan', 'karyawan.id as idKaryawan')
             ->where('akun.id', $account_id)
             ->first();
     }

@@ -22,21 +22,10 @@ class LoginController extends Controller
         $user = $this->akunModel::where('username', $cred['username'])->first();
         if ($user && password_verify($cred['password'], $user->password)) {
             if (Auth::attempt($cred)) {
-                if ($user->role_id == 1) {
-
-                    $dataAkun = $this->akunModel->getAdminLoginData($user->id);
-                    // if ($user->role_id != 1) {
-                    //     $dataAkun = $this->akunModel->getCustomerLoginData($user->id);
-                    // }
-                    $request->session()->put('data', $dataAkun);
-                    $request->session()->regenerate();
-                    return redirect()->intended('/dashboard');
-                } else {
-                    $dataAkun = $this->akunModel->getPenyewaLoginData($user->id);
-                    $request->session()->put('data', $dataAkun);
-                    $request->session()->regenerate();
-                    return redirect()->intended('/profil');
-                }
+                $dataAkun = $this->akunModel->getLoginData($user->id);
+                $request->session()->put('data', $dataAkun);
+                $request->session()->regenerate();
+                return redirect()->intended('/verifyUser');
             }
         }
         return back()->with('error', 'username atau Password Salah');

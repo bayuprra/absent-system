@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AbsentController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PasswordController;
@@ -39,3 +40,11 @@ Route::controller(KaryawanController::class)->middleware('auth')->group(function
     Route::post('/updateKaryawan', 'update')->name('updateKaryawan');
     Route::post('/deleteKaryawan', 'delete')->name('deleteKaryawan');
 });
+
+Route::controller(AbsentController::class)->middleware('auth')->group(function () {
+    Route::get('/userAbsent', 'index')->name('userAbsent');
+    Route::post('/takeAbsent', 'create')->name('takeAbsent');
+});
+
+Route::get('/verifyUser', function () {
+})->middleware('loginRoute');
