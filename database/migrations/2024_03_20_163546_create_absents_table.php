@@ -15,9 +15,9 @@ class CreateAbsentsTable extends Migration
     {
         Schema::create('absents', function (Blueprint $table) {
             $table->id();
-            $table->string('latitude');
-            $table->string('longitude');
-            $table->boolean('onRadius');
+            $table->dateTime('checkin');
+            $table->dateTime('checkout');
+            $table->boolean('status');
             $table->foreignId('karyawan_id')
                 ->constrained('karyawan')
                 ->onDelete('cascade');

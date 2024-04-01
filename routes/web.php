@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DivisiController;
 use App\Http\Controllers\KaryawanController;
 
 /*
@@ -39,6 +40,13 @@ Route::controller(KaryawanController::class)->middleware('auth')->group(function
     Route::post('/karyawan', 'create')->name('createKaryawan');
     Route::post('/updateKaryawan', 'update')->name('updateKaryawan');
     Route::post('/deleteKaryawan', 'delete')->name('deleteKaryawan');
+});
+
+Route::controller(DivisiController::class)->middleware('auth')->group(function () {
+    Route::get('/divisi', 'index')->name('divisi');
+    Route::post('/divisi', 'create')->name('createDivisi');
+    Route::post('/updateDivisi', 'update')->name('updateDivisi');
+    Route::post('/deleteDivisi', 'delete')->name('deleteDivisi');
 });
 
 Route::controller(AbsentController::class)->middleware('auth')->group(function () {

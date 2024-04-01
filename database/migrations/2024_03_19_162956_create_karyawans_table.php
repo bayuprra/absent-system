@@ -18,10 +18,13 @@ class CreateKaryawansTable extends Migration
             $table->string('nama');
             $table->string('jenis_kelamin');
             $table->string('no_telepon');
-            $table->string('divisi');
             $table->foreignId('akun_id')
                 ->constrained('akun')
                 ->onDelete('cascade');
+            $table->foreignId('divisi_id')
+                ->nullable()
+                ->constrained('divisi')
+                ->nullOnDelete();
             $table->timestamps();
         });
     }

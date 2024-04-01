@@ -14,12 +14,16 @@ class Karyawan extends Model
         "nama",
         "jenis_kelamin",
         "no_telepon",
-        "divisi",
+        "divisi_id",
         'akun_id'
     ];
 
     public function akun()
     {
         return $this->belongsTo(akunModel::class, 'akun_id');
+    }
+    public function divisi()
+    {
+        return $this->belongsTo(Divisi::class, 'divisi_id');
     }
 }

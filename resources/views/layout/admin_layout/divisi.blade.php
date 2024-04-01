@@ -1,11 +1,4 @@
 @extends('layout.main_layout.main')
-@section('style')
-    <style>
-        .select2-container .select2-selection--single {
-            height: auto;
-        }
-    </style>
-@endSection
 @section('content')
     <section class="content">
         <div class="container-fluid">
@@ -25,11 +18,11 @@
                             {{ session('error') }}
                         </div>
                     @endif
-                    @if ($errors->has('username'))
+                    @if ($errors->has('nama'))
                         <div class="alert alert-danger alert-dismissible">
                             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                             <i class="icon fas fa-times"></i>
-                            {{ $errors->first('username') }}
+                            {{ $errors->first('nama') }}
                         </div>
                     @endif
                 </div>
@@ -40,10 +33,6 @@
                             <tr>
                                 <th>No</th>
                                 <th>Nama</th>
-                                <th>Username</th>
-                                <th>Jenis Kelamin</th>
-                                <th>Nomor Telepon</th>
-                                <th>Divisi</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -55,10 +44,6 @@
                                 <tr>
                                     <td>{{ $num++ }}</td>
                                     <td>{{ $da->nama }}</td>
-                                    <td>{{ $da->akun->username }}</td>
-                                    <td>{{ $da->jenis_kelamin }}</td>
-                                    <td>{{ $da->no_telepon }}</td>
-                                    <td>{{ $da->divisi->nama }}</td>
                                     <td>
                                         <div class="row">
                                             <div class="col-6 col-sm-12 col-xs-12 mb-1">
@@ -73,10 +58,10 @@
                                                         class="fas fa-solid fa-trash"></i></button>
                                             </div>
                                         </div>
-                                        <form action="{{ route('deleteKaryawan') }}" method="post"
+                                        <form action="{{ route('deleteDivisi') }}" method="post"
                                             id="formHapus{{ $da->id }}">
                                             @csrf
-                                            <input type="hidden" name="id" value="{{ $da->akun_id }}">
+                                            <input type="hidden" name="id" value="{{ $da->id }}">
                                         </form>
 
                                     </td>
@@ -93,13 +78,13 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Tambah Karyawan</h4>
+                    <h4 class="modal-title">Tambah Divisi</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('createKaryawan') }}" method="post">
+                    <form action="{{ route('createDivisi') }}" method="post">
                         @csrf
                         <div class="row">
                             <div class="col-12">
@@ -107,46 +92,6 @@
                                     <label>Nama</label>
                                     <input type="text" class="form-control" placeholder="input nama" name="nama"
                                         required>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label>Jenis Kelamin</label>
-                                    <select class="custom-select" name="jenis_kelamin">
-                                        <option value="" selected disabled>-Pilih Jenis Kelamin-</option>
-                                        <option value="laki-laki">Laki - Laki</option>
-                                        <option value="perempuan">Perempuan</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label>Username / Email</label>
-                                    <input type="email" class="form-control" placeholder="input username / email"
-                                        name="username" required>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label>Nomor Telepon</label>
-                                    <input type="text" class="form-control" placeholder="input Nomor Telepon"
-                                        name="no_telepon" required
-                                        oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
-                                        maxlength="15">
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <div class="form-group">
-                                        <label>Divisi</label>
-                                        <select class="form-control select2" style="width: 100%;height:auto" name="divisi"
-                                            required>
-                                            <option selected="selected" hidden disabled>Pilih Divisi</option>
-                                            @foreach ($divisi as $div)
-                                                <option value="{{ $div->id }}">{{ $div->nama }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -167,66 +112,21 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title">Edit Kategori</h4>
+                        <h4 class="modal-title">Edit Divisi</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form action="{{ route('updateKaryawan') }}" method="post">
+                        <form action="{{ route('updateDivisi') }}" method="post">
                             @csrf
                             <input type="hidden" name="id" value="{{ $da->id }}">
-                            <input type="hidden" name="akunId" value="{{ $da->akun_id }}">
                             <div class="row">
                                 <div class="col-12">
                                     <div class="form-group">
                                         <label>Nama</label>
-                                        <input type="text" class="form-control" placeholder="input nama"
-                                            name="nama" required value="{{ $da->nama }}">
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="form-group">
-                                        <label>Jenis Kelamin</label>
-                                        <select class="custom-select" name="jenis_kelamin">
-                                            <option value="" selected disabled>-Pilih Jenis Kelamin-</option>
-                                            <option value="laki-laki"
-                                                {{ $da->jenis_kelamin == 'laki-laki' ? 'selected' : '' }}>Laki - Laki
-                                            </option>
-                                            <option value="perempuan"
-                                                {{ $da->jenis_kelamin == 'perempuan' ? 'selected' : '' }}>Perempuan
-                                            </option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="form-group">
-                                        <label>Username / Email</label>
-                                        <input type="email" class="form-control" placeholder="input username / email"
-                                            name="username" required value="{{ $da->akun->username }}">
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="form-group">
-                                        <label>Nomor Telepon</label>
-                                        <input type="text" class="form-control" placeholder="input Nomor Telepon"
-                                            name="no_telepon" required
-                                            oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
-                                            value="{{ $da->no_telepon }}" maxlength="15">
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="form-group">
-                                        <label>Divisi</label>
-                                        <select class="form-control select2" style="width: 100%;height:auto"
-                                            name="divisi" required>
-                                            <option selected="selected" hidden disabled>Pilih Divisi</option>
-                                            @foreach ($divisi as $div)
-                                                <option value="{{ $div->id }}"
-                                                    {{ $div->id == $da->divisi_id ? 'selected' : '' }}>{{ $div->nama }}
-                                                </option>
-                                            @endforeach
-                                        </select>
+                                        <input type="text" class="form-control" placeholder="input nama" name="nama"
+                                            required value="{{ $da->nama }}">
                                     </div>
                                 </div>
                             </div>
@@ -252,12 +152,25 @@
                 "lengthChange": false,
                 "autoWidth": false,
                 "buttons": [{
-                    "text": "Tambah Karyawan",
+                    "text": "Tambah Divisi",
                     "className": "btn btn-primary btn-info",
                     "action": function() {
                         $('#modal-add').modal('show');
                     }
-                }]
+                }],
+                "columnDefs": [{
+                        "width": "10%",
+                        "targets": 0
+                    },
+                    {
+                        "width": "80%",
+                        "targets": 1
+                    },
+                    {
+                        "width": "10%",
+                        "targets": 2
+                    }
+                ]
             }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
 
 

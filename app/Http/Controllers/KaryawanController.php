@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\akunModel;
+use App\Models\Divisi;
 use App\Models\Karyawan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +16,8 @@ class KaryawanController extends Controller
         $data = array(
             'title'             => "Data Karyawan",
             'folder'            => "Admin",
-            'data'              => Karyawan::with('akun')->get()
+            'data'              => Karyawan::with('akun')->get(),
+            'divisi'            => Divisi::all()
         );
         return view('layout/admin_layout/karyawan', $data);
     }
@@ -26,8 +28,7 @@ class KaryawanController extends Controller
             'nama' => 'required|string',
             'username' => 'required|string|unique:akun',
             'jenis_kelamin' => 'required|string',
-            'no_telepon' => 'required|string',
-            'divisi' => 'required|string',
+            'no_telepon' => 'required|string'
         ], [
             'username.unique' => 'Username atau email sudah digunakan. Silakan pilih username lain.',
         ]);
@@ -44,7 +45,7 @@ class KaryawanController extends Controller
                 $karyawan->nama = $request->nama;
                 $karyawan->jenis_kelamin = $request->jenis_kelamin;
                 $karyawan->no_telepon = $request->no_telepon;
-                $karyawan->divisi = $request->divisi;
+                $karyawan->divisi_id = intval($request->divisi);
                 $karyawan->akun_id = $akun->id;
                 $karyawan->save();
             });
@@ -66,7 +67,7 @@ class KaryawanController extends Controller
                 $karyawan->nama = $request->nama;
                 $karyawan->jenis_kelamin = $request->jenis_kelamin;
                 $karyawan->no_telepon = $request->no_telepon;
-                $karyawan->divisi = $request->divisi;
+                $karyawan->divisi_id = intval($request->divisi);
                 $karyawan->save();
             });
             return redirect()->back()->with('success', 'Karyawan Berhasil Diupdate');
