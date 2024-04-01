@@ -1,10 +1,9 @@
+@php
+    $role = session()->get('data')->nama_role ?? 'gu';
+@endphp
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
-    <a href="AdminLTE/index3.html" class="brand-link">
-        <img src="{{ asset('AdminLTE/dist/img/AdminLTELogo.png') }}" alt="AdminLTE Logo"
-            class="brand-image img-circle elevation-3" style="opacity: .8">
-        <span class="brand-text font-weight-light">nama</span>
-    </a>
+
 
     <!-- Sidebar -->
     <div class="sidebar">
@@ -25,31 +24,34 @@
                 data-accordion="false">
                 <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
-
-                <li class="nav-item">
-                    <a href="{{ route('dashboard') }}" class="nav-link">
-                        <i class=" nav-icon fas fa-tachometer-alt"></i>
-                        <p>
-                            Dashboard
-                        </p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('karyawan') }}" class="nav-link">
-                        <i class="nav-icon fas fa-user-alt"></i>
-                        <p>
-                            Karyawan
-                        </p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('userAbsent') }}" class="nav-link">
-                        <i class="nav-icon fas fa-user-alt"></i>
-                        <p>
-                            Absensi
-                        </p>
-                    </a>
-                </li>
+                @if ($role == 'Admin')
+                    <li class="nav-item">
+                        <a href="{{ route('dashboard') }}" class="nav-link">
+                            <i class=" nav-icon fas fa-tachometer-alt"></i>
+                            <p>
+                                Dashboard
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('karyawan') }}" class="nav-link">
+                            <i class="nav-icon fas fa-user-alt"></i>
+                            <p>
+                                Karyawan
+                            </p>
+                        </a>
+                    </li>
+                @endif
+                @if ($role == 'karyawan')
+                    <li class="nav-item">
+                        <a href="{{ route('userAbsent') }}" class="nav-link">
+                            <i class="nav-icon fas fa-user-alt"></i>
+                            <p>
+                                Absensi
+                            </p>
+                        </a>
+                    </li>
+                @endif
             </ul>
         </nav>
         <!-- /.sidebar-menu -->

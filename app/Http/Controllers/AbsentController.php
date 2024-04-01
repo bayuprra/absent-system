@@ -9,12 +9,12 @@ use Exception;
 
 class AbsentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $data = array(
             'title'         => "Absent",
             'folder'        => "User",
-            'dataSession'   => session()->all()
+            'dataSession'   => session()->all(),
         );
         return view('layout/user_layout/absent', $data);
     }

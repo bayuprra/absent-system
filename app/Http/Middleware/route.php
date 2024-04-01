@@ -17,7 +17,6 @@ class route
     public function handle(Request $request, Closure $next)
     {
         $user = $request->session()->get('data')->nama_role ?? "";
-        dump($user);
         if (strtolower($user) == 'admin') {
             return redirect('/dashboard');
         } elseif (strtolower($user) == 'karyawan') {

@@ -21,9 +21,6 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
-                    <div class="card-header">
-                        <button id="getLocation">tes</button>
-                    </div>
                     <div class="card card-primary">
                         <input type="hidden" id="karyawan_id" value="{{ $idKaryawan }}">
                         <input type="hidden" id="akun_id" value="{{ $idAkun }}">
@@ -130,8 +127,7 @@
             }).addTo(map);
 
             const options = {
-                enableHighAccuracy: true,
-                maximumAge: 30000,
+                maximumAge: 0,
                 timeout: 10000,
             };
             const successCallback = (position) => {
