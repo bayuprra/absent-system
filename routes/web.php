@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AbsentController;
+use App\Http\Controllers\AbsentDataController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PasswordController;
@@ -56,3 +57,7 @@ Route::controller(AbsentController::class)->middleware('auth')->group(function (
 
 Route::get('/verifyUser', function () {
 })->middleware('loginRoute');
+
+Route::controller(AbsentDataController::class)->middleware('auth')->group(function () {
+    Route::get('/absentData', 'index')->name('absentData');
+});

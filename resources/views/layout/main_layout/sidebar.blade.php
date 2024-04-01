@@ -49,6 +49,14 @@
                             </p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="{{ route('absentData') }}" class="nav-link">
+                            <i class="nav-icon fas fa-portrait"></i>
+                            <p>
+                                Absent
+                            </p>
+                        </a>
+                    </li>
                 @endif
                 @if ($role == 'karyawan')
                     <li class="nav-item">
