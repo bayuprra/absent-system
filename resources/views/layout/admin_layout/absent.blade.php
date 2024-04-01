@@ -52,7 +52,9 @@
                                             $cellStyle = 'bg-danger';
                                         }
                                     @endphp
-                                    <th data-orderable="false" class="{{ $cellStyle }}">{{ $i + 1 }}</th>
+                                    <th data-orderable="false" class="{{ $cellStyle }}">
+                                        {{ $i + 1 }}
+                                    </th>
                                 @endfor
                             </tr>
 
