@@ -21,78 +21,14 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
-                    <div class="card">
+                    <div class="card card-primary">
+                        <input type="hidden" id="karyawan_id" value="{{ $idKaryawan }}">
+                        <input type="hidden" id="akun_id" value="{{ $idAkun }}">
+                        <div class="card-body p-0">
+                            <!-- THE CALENDAR -->
+                            <div id="calendar"></div>
+                        </div>
                         <!-- /.card-body -->
-                        <div class="card-header row">
-                            @php
-                                use Carbon\Carbon;
-                                $checkin = false;
-                                $checkout = false;
-                                if ($dataAbsent->checkin != null) {
-                                    $checkin = true;
-                                }
-                                if ($dataAbsent->checkout != null) {
-                                    $checkout = true;
-                                }
-                            @endphp
-                            <div class="col-6">
-                                <a class="btn btn-app btn-block {{ $checkin ? 'bg-secondary' : '' }}"
-                                    {!! $checkin ? 'style="cursor:no-drop;pointer-events: none;"' : '' !!} onclick="alert(2)">
-                                    <i class="far fa-calendar-check"></i> Checking In
-                                </a>
-                            </div>
-
-                            <div class="col-6"><a class="btn btn-app btn-block {{ $checkout ? 'bg-secondary' : '' }}"
-                                    {!! $checkout ? 'style="cursor:no-drop;pointer-events: none;"' : '' !!} onclick="alert(2)">
-                                    <i class="far fa-calendar-check"></i> Checking Out
-                                </a></div>
-                        </div>
-                        <div class="card-body row">
-                            @if (!$checkin)
-                                <div class="col-12">
-                                    <p class="text-muted text-center">
-                                        Anda Belum Melakukan Login.
-                                    </p>
-                                </div>
-                            @else
-                                <div class="col-6">
-                                    <div class="timeline">
-                                        <div class="time-label">
-                                            <span
-                                                class="bg-success">{{ Carbon::parse($dataAbsent->checkin)->locale('id_ID')->isoFormat('HH:mm') }}</span>
-                                        </div>
-                                        <div>
-                                            <i class="fas fa-sign-in-alt bg-success"></i>
-                                            <div class="timeline-item">
-                                                <h3 class="timeline-header"><a href="#">Checking In</a>
-                                                </h3>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    @if (!$checkout)
-                                        <p class="text-muted text-center">
-                                            Anda Belum Logout.
-                                        </p>
-                                    @else
-                                        <div class="timeline">
-                                            <div>
-                                                <i class="fas fa-sign-out-alt bg-danger"></i>
-                                                <div class="timeline-item">
-                                                    <h3 class="timeline-header"><a href="#">Checking Out</a>
-                                                    </h3>
-                                                </div>
-                                            </div>
-                                            <div class="time-label">
-                                                <span
-                                                    class="bg-danger">{{ Carbon::parse($dataAbsent->checkout)->locale('id_ID')->isoFormat('HH:mm') }}</span>
-                                            </div>
-                                        </div>
-                                    @endif
-                                </div>
-                            @endif
-                        </div>
                     </div>
                     <!-- /.card -->
                 </div>
@@ -101,6 +37,30 @@
             <!-- /.row -->
         </div><!-- /.container-fluid -->
     </section>
+
+    <div class="modal fade" id="modal-add">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title"><button class="btn btn-primary btn-sm" onclick="takeAbsent()">Get
+                            Location</button></h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="map"></div>
+
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+                    <button type="button" id="saveAbsen" class="btn btn-primary">Simpan Absent</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
 @endSection
 
 @section('script')

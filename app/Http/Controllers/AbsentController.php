@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Absent;
+use App\Models\AbsenTime;
 use App\Models\Karyawan;
+use App\Models\UserAbsent;
 use Illuminate\Http\Request;
 use Exception;
 
@@ -11,11 +13,15 @@ class AbsentController extends Controller
 {
     public function index(Request $request)
     {
+        $dataLogin = AbsenTime::where('tanggal', date('Y-m-d'))->first('id');
+        $dataLoginuser = UserAbsent::where('absenttime_id', $dataLogin->id)->where('karyawan_id', session()->get('data')->idKaryawan)->first();
         $data = array(
             'title'         => "Absent",
             'folder'        => "User",
             'dataSession'   => session()->all(),
+            'dataAbsent'     => $dataLoginuser
         );
+        dump($data);
         return view('layout/user_layout/absent', $data);
     }
 

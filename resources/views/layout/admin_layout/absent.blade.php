@@ -53,20 +53,60 @@
                                         }
                                     @endphp
                                     <th data-orderable="false" class="{{ $cellStyle }}">
-                                        {{ $i + 1 }}
+                                        {{ $date->format('d') }}
                                     </th>
                                 @endfor
                             </tr>
-
                         </thead>
-
                         <tbody>
-                            <?php
-                            $num = 1;
-                            ?>
+                            @foreach ($data as $nama => $absences)
+                                <tr>
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $nama }}</td>
+                                    @php
+                                        $dateIter = Carbon::now()->startOfMonth();
+                                    @endphp
+                                    @for ($i = 0; $i < $endDateThisMonth; $i++)
+                                        <td>
+                                            @php
+                                                $attendance = null;
+                                                $dateBeforeNow = true;
+                                                foreach ($absences as $absence) {
+                                                    $absenceDate = Carbon::parse($absence['tanggalAbsent']);
+                                                    if (
+                                                        $dateIter->format('Y-m-d') == $absenceDate->format('Y-m-d') &&
+                                                        $absence['checkin'] != null
+                                                    ) {
+                                                        $attendance = 'hadir';
+                                                        break;
+                                                    } elseif ($dateIter->format('Y-m-d') < date('Y-m-d')) {
+                                                        $dateBeforeNow = false;
+                                                    }
+                                                }
+                                            @endphp
 
+                                            @if ($attendance === 'hadir')
+                                                <p style="display: none">hadir</p>
+                                                <small class="badge badge-success"><i
+                                                        class="far fa-check-circle"></i></small>
+                                            @elseif($dateBeforeNow)
+                                                -
+                                            @else
+                                                <p style="display: none">noHadir</p>
+                                                <small class="badge badge-danger"><i
+                                                        class="fas fa-times-circle"></i></small>
+                                            @endif
+
+                                        </td>
+                                        @php
+                                            $dateIter->addDay();
+                                        @endphp
+                                    @endfor
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
+
                 </div>
                 <!-- /.card-body -->
             </div>
@@ -88,66 +128,64 @@
                     extend: 'collection',
                     buttons: [{
                             extend: 'excel',
-                            exportOptions: {
-                                columns: ':visible' // Ekspor kolom yang terlihat
+                            customize: function(xlsx) {
+                                var sheet = xlsx.xl.worksheets['sheet1.xml'];
+                                $('row c', sheet).each(function() {
+                                    var originalText = $(this).text();
+                                    switch (originalText) {
+                                        case "hadir":
+                                            $(this).text('hadir');
+                                            $(this).attr('t',
+                                                's'
+                                            );
+                                            break;
+                                        case "noHadir":
+                                            $(this).text('tidak hadir');
+                                            $(this).attr('t',
+                                                's'
+                                            );
+                                            break;
+                                    }
+                                });
                             }
                         },
                         {
                             extend: 'pdf',
-                            exportOptions: {
-                                columns: ':visible' // Ekspor kolom yang terlihat
+                            orientation: 'landscape',
+                            pageSize: 'A4',
+                            customize: function(doc) {
+                                doc.content.forEach(function(content) {
+                                    if (content.table) {
+                                        content.table.body.forEach(function(row) {
+                                            row.forEach(function(cell) {
+                                                switch (cell
+                                                    .text) {
+                                                    case "hadir":
+                                                        cell.text =
+                                                            'hadir'
+                                                        break
+                                                    case "noHadir":
+                                                        cell.text =
+                                                            'tidak hadir'
+                                                        break
+                                                }
+                                            });
+                                        });
+                                    }
+                                });
                             }
-                        }, {
+                        },
+                        {
                             extend: 'print',
-                            exportOptions: {
-                                columns: ':visible' // Ekspor kolom yang terlihat
+                            customize: function(win) {
+                                $(win.document.body).find('table').addClass('display').css(
+                                    'font-size', '12px');
+                                $(win.document.body).find('tr').addClass('trClass');
+                                $(win.document.body).find('td').addClass('tdClass');
                             }
                         }
                     ]
-                }, "colvis", {
-                    text: 'Filter',
-                    className: 'filter-dropdown',
-                    extend: 'collection',
-                    buttons: [{
-                            text: 'All',
-                            action: function(e, dt, node, config) {
-                                let tod = new Date().getDate()
-                                dt.column(1).search('').draw();
-                            }
-                        }, {
-                            text: 'Today',
-                            action: function(e, dt, node, config) {
-                                let tod = new Date().getDate()
-                                dt.column(1).search(tod)
-                                    .draw();
-                            }
-                        },
-                        {
-                            text: 'This Week',
-                            action: function(e, dt, node, config) {
-                                let tod = new Date().getMonth()
-                                let months = ['Januari', 'Februari', 'Maret', 'April',
-                                    'Mei', 'Juni', 'Juli', 'Agustus', 'September',
-                                    'Oktober', 'November', 'Desember'
-                                ];
-                                let monthName = months[tod];
-                                dt.column(1).search(monthName).draw();
-                            }
-                        },
-                        {
-                            text: 'This Month',
-                            action: function(e, dt, node, config) {
-                                let tod = new Date().getMonth()
-                                let months = ['Januari', 'Februari', 'Maret', 'April',
-                                    'Mei', 'Juni', 'Juli', 'Agustus', 'September',
-                                    'Oktober', 'November', 'Desember'
-                                ];
-                                let monthName = months[tod];
-                                dt.column(1).search(monthName).draw();
-                            }
-                        }
-                    ]
-                }],
+                }]
             }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
 
 
