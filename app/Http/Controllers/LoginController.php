@@ -28,7 +28,7 @@ class LoginController extends Controller
                 return redirect()->intended('/verifyUser');
             }
         }
-        return back()->with('error', 'username atau Password Salah');
+        return redirect()->back()->withInput($request->only('username'))->with('error', 'username atau Password Salah');
     }
 
     public function logout(Request $request)

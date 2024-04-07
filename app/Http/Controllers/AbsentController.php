@@ -21,7 +21,6 @@ class AbsentController extends Controller
             'dataSession'   => session()->all(),
             'dataAbsent'     => $dataLoginuser
         );
-        dump($data);
         return view('layout/user_layout/absent', $data);
     }
 

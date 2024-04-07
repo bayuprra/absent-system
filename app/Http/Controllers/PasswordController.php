@@ -40,6 +40,6 @@ class PasswordController extends Controller
                 return redirect()->to('/login')->with('success', 'Password Berhasil Diubah, Harap Login menggunakan Password Baru');
             }
         }
-        return redirect()->to('/login')->with('error', 'Password Gagal Diubah');
+        return redirect()->back()->withInput($request->only('old'))->with('error', 'Password Salah');
     }
 }

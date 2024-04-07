@@ -37,8 +37,9 @@
                             @endphp
                             <div class="col-6">
                                 <a class="btn btn-app btn-block {{ $checkin ? 'bg-secondary' : '' }}"
-                                    {!! $checkin ? 'style="cursor:no-drop;pointer-events: none;"' : '' !!} onclick="alert(2)">
-                                    <i class="far fa-calendar-check"></i> Checking In
+                                    {!! $checkin ? 'style="cursor:no-drop;pointer-events: none;"' : '' !!} data-toggle="modal" data-target="#modal-add">
+                                    <i class="far
+                                    fa-calendar-check"></i> Checking In
                                 </a>
                             </div>
 
@@ -51,7 +52,7 @@
                             @if (!$checkin)
                                 <div class="col-12">
                                     <p class="text-muted text-center">
-                                        Anda Belum Melakukan Login.
+                                        Anda Belum Melakukan Absent.
                                     </p>
                                 </div>
                             @else
@@ -101,6 +102,30 @@
             <!-- /.row -->
         </div><!-- /.container-fluid -->
     </section>
+
+    <div class="modal fade" id="modal-add">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title"><button class="btn btn-primary btn-sm" onclick="takeAbsent()">Get
+                            Location</button></h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="map"></div>
+
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+                    <button type="button" id="saveAbsen" class="btn btn-primary">Simpan Absent</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
 @endSection
 
 @section('script')
