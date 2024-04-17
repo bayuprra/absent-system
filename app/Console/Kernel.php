@@ -7,6 +7,7 @@ use App\Models\Karyawan;
 use App\Models\UserAbsent as ModelsUserAbsent;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use UserAbsent;
 
 class Kernel extends ConsoleKernel
 {
@@ -26,17 +27,22 @@ class Kernel extends ConsoleKernel
             if (!AbsenTime::where('tanggal', $data->tanggal)->exists()) {
                 if (now()->isWeekend()) {
                     $data->status = 1;
+                } else {
+                    $data->status = 0;
                 }
                 $data->save();
-                $userAbsentData = [];
-                foreach ($userAbsent as $ua) {
+            }
+            $lastAbsent = AbsenTime::where('tanggal', $data->tanggal)->orderBy('id', 'DESC')->first();
+            $userAbsentData = [];
+            foreach ($userAbsent as $ua) {
+                if (!ModelsUserAbsent::where('karyawan_id', $ua->id)->where('absenttime_id', $lastAbsent->id)->exists()) {
                     $userAbsentData[] = [
                         'karyawan_id' => $ua->id,
-                        'absenttime_id' => $data->id
+                        'absenttime_id' => $lastAbsent->id
                     ];
                 }
-                ModelsUserAbsent::insert($userAbsentData);
             }
+            ModelsUserAbsent::insert($userAbsentData);
         })->everyMinute()->runInBackground();
         // })->weekdays()->at('00:01')->runInBackground();
     }
