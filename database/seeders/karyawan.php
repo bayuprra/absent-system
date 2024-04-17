@@ -17,7 +17,7 @@ class karyawan extends Seeder
     {
         $data = [
             [
-                'nama'              => 'Admin',
+                'nama'              => 'karyawan1',
                 'jenis_kelamin'     => 'Perempuan',
                 'no_telepon'        => '008867678',
                 'akun_id'           => '2',

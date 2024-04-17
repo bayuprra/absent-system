@@ -24,8 +24,8 @@ class AkunSeeder extends Seeder
                 'updated_at'    => Carbon::now()->format('Y-m-d H:i:s'),
             ],
             [
-                'username'      => 'user1@gmail.com',
-                'password'      => bcrypt("user1234"),
+                'username'      => 'karyawan1@gmail.com',
+                'password'      => bcrypt("karyawan1234"),
                 'role_id'       => 2,
                 'created_at'    => Carbon::now()->format('Y-m-d H:i:s'),
                 'updated_at'    => Carbon::now()->format('Y-m-d H:i:s'),
