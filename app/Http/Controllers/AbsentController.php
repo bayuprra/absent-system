@@ -6,6 +6,7 @@ use App\Models\Absent;
 use App\Models\AbsenTime;
 use App\Models\Karyawan;
 use App\Models\UserAbsent;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Exception;
 
@@ -24,20 +25,29 @@ class AbsentController extends Controller
         return view('layout/user_layout/absent', $data);
     }
 
-    public function create(Request $request)
+    public function absent(Request $request)
     {
         try {
+            $date = Carbon::now();
+            $time = $date->toDateTimeString();
             $data = $request->input('data');
-            $idKaryawan = $data['userId'];
-            $karyawan = new Absent();
-            $karyawan->karyawan_id = $idKaryawan;
-            $karyawan->latitude = $data['latitude'];
-            $karyawan->longitude = $data['longitude'];
-            $karyawan->onRadius = 1;
-            $karyawan->save();
+            $idAbsent = $data['id'];
+            $distance = $data['distance'];
+            $flag = "WFO";
+            if ($distance == "false") {
+                $flag = "WFH";
+            }
+            $status = $data['status'];
+            $absent = UserAbsent::find($idAbsent);
+            if ($status == "in") {
+                $absent->checkin = $time;
+            } else {
+                $absent->checkout = $time;
+            }
+            $absent->flag = $flag;
+            $absent->save();
             return response()->json([
                 'success' => true,
-                'data'    => $karyawan
             ], 200);
         } catch (Exception $e) {
             return response()->json([

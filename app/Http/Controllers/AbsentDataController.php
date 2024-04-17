@@ -14,6 +14,7 @@ class AbsentDataController extends Controller
             'folder'        => "Home",
             'data'          => $this->userAbsent->getUserAbsentData()
         ];
+        dump($data);
         return view('layout/admin_layout/absent', $data);
     }
 }

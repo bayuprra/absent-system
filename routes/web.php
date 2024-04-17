@@ -52,7 +52,7 @@ Route::controller(DivisiController::class)->middleware('auth')->group(function (
 
 Route::controller(AbsentController::class)->middleware('auth')->group(function () {
     Route::get('/userAbsent', 'index')->name('userAbsent');
-    Route::post('/takeAbsent', 'create')->name('takeAbsent');
+    Route::post('/takeAbsent', 'absent')->name('takeAbsent');
 });
 
 Route::get('/verifyUser', function () {

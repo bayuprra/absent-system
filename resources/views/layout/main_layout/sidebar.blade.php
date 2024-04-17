@@ -1,5 +1,6 @@
 @php
     $role = session()->get('data')->nama_role ?? 'gu';
+    $nama = session()->get('data')->namaKaryawan ?? 'Admin';
 @endphp
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
@@ -14,7 +15,7 @@
                     alt="User Image">
             </div>
             <div class="info">
-                <a href="#" class="d-block">{{ session()->get('data')->nama_role ?? 'User' }}</a>
+                <a href="#" class="d-block">{{ $nama }}</a>
             </div>
         </div>
 

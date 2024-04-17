@@ -37,14 +37,15 @@
                             @endphp
                             <div class="col-6">
                                 <a class="btn btn-app btn-block {{ $checkin ? 'bg-secondary' : '' }}"
-                                    {!! $checkin ? 'style="cursor:no-drop;pointer-events: none;"' : '' !!} data-toggle="modal" data-target="#modal-add">
+                                    {!! $checkin ? 'style="cursor:no-drop;pointer-events: none;"' : '' !!} data-toggle="modal" data-target="#modal-add" id="checkin">
                                     <i class="far
                                     fa-calendar-check"></i> Checking In
                                 </a>
                             </div>
 
                             <div class="col-6"><a class="btn btn-app btn-block {{ $checkout ? 'bg-secondary' : '' }}"
-                                    {!! $checkout ? 'style="cursor:no-drop;pointer-events: none;"' : '' !!} onclick="alert(2)">
+                                    {!! $checkout ? 'style="cursor:no-drop;pointer-events: none;"' : '' !!} data-toggle="modal" data-target="#modal-add" id="checkout"
+                                    {!! $checkin == false ? 'style="cursor:no-drop;pointer-events: none;"' : '' !!}>
                                     <i class="far fa-calendar-check"></i> Checking Out
                                 </a></div>
                         </div>
@@ -119,7 +120,8 @@
                 </div>
                 <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
-                    <button type="button" id="saveAbsen" class="btn btn-primary">Simpan Absent</button>
+                    <button type="button" id="saveAbsen" class="btn btn-primary" data-absentId="{{ $dataAbsent->id ?? 0 }}"
+                        disabled>Simpan Absent</button>
                 </div>
             </div>
             <!-- /.modal-content -->
@@ -136,70 +138,27 @@
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
     <script>
-        $(function() {
-            var date = new Date()
-            var d = date.getDate(),
-                m = date.getMonth(),
-                y = date.getFullYear()
-
-            var Calendar = FullCalendar.Calendar;
-
-            var calendarEl = document.getElementById('calendar');
-            var calendar = new Calendar(calendarEl, {
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                },
-                themeSystem: 'bootstrap',
-                //Random default events
-                events: [{
-                    title: 'Meeting',
-                    start: new Date(y, m, d),
-                    allDay: true,
-                    backgroundColor: 'none',
-                    borderColor: 'none',
-                    customProperty: 'apiCheck',
-                    editable: true
-                }],
-                eventDidMount: function(info) {
-                    if (info.event.extendedProps.customProperty === 'apiCheck') {
-                        console.log(info.event.start)
-                        // Panggil API untuk memeriksa kondisi
-                        let cc = true;
-                        if (cc) {
-                            info.event.setProp('title', 'Take Absent');
-                        } else {
-                            info.event.setProp('title', 'Success Absent');
-                        }
-                    }
-                },
-                eventClick: function(info) {
-                    $('#modal-add').modal('show');
-
-                }
-            });
-            calendar.render();
-        })
+        const locLat = -6.2425440;
+        const locLong = 106.8454430;
 
         function takeAbsent() {
             const map = L.map('map');
             map.setView([51.505, -0.09], 15);
-            // Sets initial coordinates and zoom level
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 25,
                 attribution: '© OpenStreetMap'
             }).addTo(map);
-
             const options = {
                 maximumAge: 0,
                 timeout: 10000,
             };
             const successCallback = (position) => {
                 let userLatitude, userLongitude;
-                console.log(position)
                 userLatitude = position.coords.latitude;
                 userLongitude = position.coords.longitude;
+
+                const distance = calcCrow(locLat, locLong, userLatitude, userLongitude);
+                $("#saveAbsen").prop('disabled', false).attr('data-distance', distance)
                 const accuracy = position.coords.accuracy;
                 let marker, circle, zoomed;
 
@@ -224,8 +183,91 @@
             navigator.geolocation.getCurrentPosition(successCallback, errorCallback, options);
         }
 
-        $("#saveAbsen").click(function(e) {
+        function calcCrow(lat1, lon1, lat2, lon2) {
+            var R = 6371; // km
+            var dLat = toRad(lat2 - lat1);
+            var dLon = toRad(lon2 - lon1);
+            var lat1 = toRad(lat1);
+            var lat2 = toRad(lat2);
 
+            var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            var d = R * c;
+            return d;
+        }
+
+        function toRad(Value) {
+            return Value * Math.PI / 180;
+        }
+
+        $("#saveAbsen").click(function(e) {
+            console.log($(this).data())
+            const distance = $(this).data('distance');
+            const status = $(this).data('status');
+            const absent = $(this).data('absentid');
+
+            if (!distance || !status || absent === 0) {
+                alert("please refresh page");
+                location.reload()
+            }
+            const isWFO = false;
+            if (parseInt(distance) < 0.5) {
+                isWFO = true;
+            }
+            const dataAbsent = {
+                id: parseInt(absent),
+                status: status,
+                distance: isWFO
+            }
+
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $(
+                        'meta[name="csrf-token"]').attr(
+                        'content')
+                },
+                url: "{{ route('takeAbsent') }}",
+                type: 'POST',
+                data: {
+                    'data': dataAbsent
+                },
+                dataType: 'json',
+                success: function(response) {
+                    $("#modal-add").hide()
+                    let timerInterval;
+                    Swal.fire({
+                        title: "check" + status + " Berhasil!",
+                        html: "Otomatis menutup dalam <b></b> detik.",
+                        timer: 5000,
+                        timerProgressBar: true,
+                        didOpen: () => {
+                            Swal.showLoading();
+                            const timer = Swal.getPopup().querySelector("b");
+                            timerInterval = setInterval(() => {
+                                const remainingTime = Swal.getTimerLeft();
+                                timer.textContent =
+                                    `${Math.ceil(remainingTime / 1000)}`;
+                            }, 1000);
+                        },
+                        willClose: () => {
+                            clearInterval(timerInterval);
+                        }
+                    }).then((result) => {
+                        location.reload();
+                    });
+
+                },
+                error: function(err) {
+                    console.log(err)
+                }
+            });
+        })
+        $("#checkin").click(function(e) {
+            $("#saveAbsen").attr('data-status', 'in')
+        })
+        $("#checkout").click(function(e) {
+            $("#saveAbsen").attr('data-status', 'out')
         })
     </script>
 @endSection

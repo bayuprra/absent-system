@@ -37,7 +37,8 @@
                             <tr>
                                 <th rowspan="2">No</th>
                                 <th rowspan="2">Nama</th>
-                                <th colspan="{{ $endDateThisMonth }}">Tanggal</th>
+                                <th colspan="{{ $endDateThisMonth }}">
+                                    {{ Carbon::parse(now())->locale('id_ID')->isoFormat('MMMM YYYY') }}</th>
                             </tr>
                             <tr>
                                 @for ($i = 0; $i < $endDateThisMonth; $i++)
@@ -87,8 +88,7 @@
 
                                             @if ($attendance === 'hadir')
                                                 <p style="display: none">hadir</p>
-                                                <small class="badge badge-success"><i
-                                                        class="far fa-check-circle"></i></small>
+                                                <small class="badge badge-success">{{ $absence['flag'] ?? 'WFO' }}</small>
                                             @elseif($dateBeforeNow)
                                                 -
                                             @else
@@ -126,29 +126,30 @@
                     text: 'Export',
                     className: 'filter-dropdown',
                     extend: 'collection',
-                    buttons: [{
-                            extend: 'excel',
-                            customize: function(xlsx) {
-                                var sheet = xlsx.xl.worksheets['sheet1.xml'];
-                                $('row c', sheet).each(function() {
-                                    var originalText = $(this).text();
-                                    switch (originalText) {
-                                        case "hadir":
-                                            $(this).text('hadir');
-                                            $(this).attr('t',
-                                                's'
-                                            );
-                                            break;
-                                        case "noHadir":
-                                            $(this).text('tidak hadir');
-                                            $(this).attr('t',
-                                                's'
-                                            );
-                                            break;
-                                    }
-                                });
-                            }
-                        },
+                    buttons: [
+                        // {
+                        //     extend: 'excel',
+                        //     customize: function(xlsx) {
+                        //         var sheet = xlsx.xl.worksheets['sheet1.xml'];
+                        //         $('row c', sheet).each(function() {
+                        //             var originalText = $(this).text();
+                        //             switch (originalText) {
+                        //                 case "hadir":
+                        //                     $(this).text('hadir');
+                        //                     $(this).attr('t',
+                        //                         's'
+                        //                     );
+                        //                     break;
+                        //                 case "noHadir":
+                        //                     $(this).text('tidak hadir');
+                        //                     $(this).attr('t',
+                        //                         's'
+                        //                     );
+                        //                     break;
+                        //             }
+                        //         });
+                        //     }
+                        // },    
                         {
                             extend: 'pdf',
                             orientation: 'landscape',

@@ -31,7 +31,6 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="{{ asset('AdminLTE/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}">
 
-    <link rel="stylesheet" href="{{ asset('AdminLTE/plugins/fullcalendar/main.css') }}">
 
     <!-- Select2-->
     <link rel="stylesheet" href="{{ asset('AdminLTE/plugins/select2/css/select2.min.css') }}">
@@ -164,8 +163,6 @@
     <script src="{{ asset('AdminLTE/plugins/select2/js/select2.full.min.js') }}"></script>
 
     <!-- fullCalendar 2.2.5 -->
-    <script src="{{ asset('AdminLTE/plugins/moment/moment.min.js') }}"></script>
-    <script src="{{ asset('AdminLTE/plugins/fullcalendar/main.js') }}"></script>
     <!-- PAGE PLUGINS -->
     <!-- jQuery Mapael -->
     <script src="{{ asset('AdminLTE/plugins/jquery-mousewheel/jquery.mousewheel.js') }}"></script>
