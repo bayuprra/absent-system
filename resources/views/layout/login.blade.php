@@ -20,7 +20,7 @@
 <body class="hold-transition login-page">
     <div class="login-box">
         <div class="login-logo">
-            <a href="{{ asset('AdminLTE/index2.html') }}"><b>Sembilan</b>pilar</a>
+            <a href="{{ asset('AdminLTE/index2.html') }}"><b>Sembilan</b> Pilar<b> Semesta</b></a>
         </div>
         @if (session()->has('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">

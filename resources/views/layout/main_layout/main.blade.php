@@ -64,7 +64,7 @@
                 <!-- Notifications Dropdown Menu -->
                 <li class="nav-item dropdown">
                     <a class="nav-link" data-toggle="dropdown" href="#">
-                        <i class="far fa-bell"></i>
+                        <i class="far  fa-user-circle"></i>
                     </a>
                     <div class="dropdown-menu dropdown-menu-default dropdown-menu-right">
                         <a href="#" class="dropdown-item" onclick="logout()">
@@ -75,7 +75,7 @@
                             <button type="submit" hidden>Logout</button>
                         </form>
                         <a href="{{ route('changePassword') }}" class="dropdown-item">
-                            <i class="fas fa-key mr-2"></i> Ganti Password
+                            <i class="fas fa-key mr-2"></i> Change Password
                         </a>
                     </div>
                 </li>
