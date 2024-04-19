@@ -14,7 +14,7 @@ class DashboardController extends Controller
     public function index()
     {
         $today = Carbon::today()->toDateString();
-        $idAbsentDate = AbsenTime::where('tanggal', $today)->first('id');
+        $idAbsentDate = AbsenTime::where('tanggal', $today)->where('status', 0)->first('id');
         $dataUserAbsent = UserAbsent::where('absenttime_id', $idAbsentDate->id)->with('karyawan')->get();
         $countTodayAbsent = $dataUserAbsent->count();
         $countUserCheckin = $dataUserAbsent->whereNotNull('checkin')->count();

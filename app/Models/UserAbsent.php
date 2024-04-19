@@ -23,6 +23,10 @@ class UserAbsent extends Model
     {
         return $this->belongsTo(Karyawan::class, 'karyawan_id');;
     }
+    function absenttime()
+    {
+        return $this->belongsTo(AbsenTime::class, 'absenttime_id');
+    }
 
     function getUserAbsentData()
     {

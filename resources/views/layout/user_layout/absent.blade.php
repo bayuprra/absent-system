@@ -2,6 +2,8 @@
     $sessionData = session()->get('data');
     $idKaryawan = $sessionData->idKaryawan ?? '';
     $idAkun = $sessionData->id ?? '';
+    use Carbon\Carbon;
+
 @endphp
 @extends('layout.main_layout.main')
 @section('style')
@@ -22,79 +24,86 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card">
-                        <!-- /.card-body -->
-                        <div class="card-header row">
-                            @php
-                                use Carbon\Carbon;
-                                $checkin = false;
-                                $checkout = false;
-                                if ($dataAbsent->checkin != null) {
-                                    $checkin = true;
-                                }
-                                if ($dataAbsent->checkout != null) {
-                                    $checkout = true;
-                                }
-                            @endphp
-                            <div class="col-6">
-                                <a class="btn btn-app btn-block {{ $checkin ? 'bg-secondary' : '' }}"
-                                    {!! $checkin ? 'style="cursor:no-drop;pointer-events: none;"' : '' !!} data-toggle="modal" data-target="#modal-add" id="checkin">
-                                    <i class="far
-                                    fa-calendar-check"></i> Checking In
-                                </a>
+                        @if ($dataAbsent->absenttime['status'])
+                            <div class="card-header row">
+                                NO ABSENT TODAY
                             </div>
+                        @else
+                            <div class="card-header row">
+                                @php
+                                    $checkin = false;
+                                    $checkout = false;
+                                    if ($dataAbsent->checkin != null) {
+                                        $checkin = true;
+                                    }
+                                    if ($dataAbsent->checkout != null) {
+                                        $checkout = true;
+                                    }
+                                @endphp
+                                <div class="col-6">
+                                    <a class="btn btn-app btn-block {{ $checkin ? 'bg-secondary' : '' }}"
+                                        {!! $checkin ? 'style="cursor:no-drop;pointer-events: none;"' : '' !!} data-toggle="modal" data-target="#modal-add" id="checkin">
+                                        <i class="far
+                                    fa-calendar-check"></i> Checking
+                                        In
+                                    </a>
+                                </div>
 
-                            <div class="col-6"><a class="btn btn-app btn-block {{ $checkout ? 'bg-secondary' : '' }}"
-                                    {!! $checkout ? 'style="cursor:no-drop;pointer-events: none;"' : '' !!} data-toggle="modal" data-target="#modal-add" id="checkout"
-                                    {!! $checkin == false ? 'style="cursor:no-drop;pointer-events: none;"' : '' !!}>
-                                    <i class="far fa-calendar-check"></i> Checking Out
-                                </a></div>
-                        </div>
-                        <div class="card-body row">
-                            @if (!$checkin)
-                                <div class="col-12">
-                                    <p class="text-muted text-center">
-                                        Anda Belum Melakukan Absent.
-                                    </p>
-                                </div>
-                            @else
-                                <div class="col-6">
-                                    <div class="timeline">
-                                        <div class="time-label">
-                                            <span
-                                                class="bg-success">{{ Carbon::parse($dataAbsent->checkin)->locale('id_ID')->isoFormat('HH:mm') }}</span>
-                                        </div>
-                                        <div>
-                                            <i class="fas fa-sign-in-alt bg-success"></i>
-                                            <div class="timeline-item">
-                                                <h3 class="timeline-header"><a href="#">Checking In</a>
-                                                </h3>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    @if (!$checkout)
+                                <div class="col-6"><a class="btn btn-app btn-block {{ $checkout ? 'bg-secondary' : '' }}"
+                                        {!! $checkout ? 'style="cursor:no-drop;pointer-events: none;"' : '' !!} data-toggle="modal" data-target="#modal-add" id="checkout"
+                                        {!! $checkin == false ? 'style="cursor:no-drop;pointer-events: none;"' : '' !!}>
+                                        <i class="far fa-calendar-check"></i> Checking Out
+                                    </a></div>
+                            </div>
+                            <div class="card-body row">
+                                @if (!$checkin)
+                                    <div class="col-12">
                                         <p class="text-muted text-center">
-                                            Anda Belum Logout.
+                                            Anda Belum Melakukan Absent.
                                         </p>
-                                    @else
+                                    </div>
+                                @else
+                                    <div class="col-6">
                                         <div class="timeline">
+                                            <div class="time-label">
+                                                <span
+                                                    class="bg-success">{{ Carbon::parse($dataAbsent->checkin)->locale('id_ID')->isoFormat('HH:mm') }}</span>
+                                            </div>
                                             <div>
-                                                <i class="fas fa-sign-out-alt bg-danger"></i>
+                                                <i class="fas fa-sign-in-alt bg-success"></i>
                                                 <div class="timeline-item">
-                                                    <h3 class="timeline-header"><a href="#">Checking Out</a>
+                                                    <h3 class="timeline-header"><a href="#">Checking In</a>
                                                     </h3>
                                                 </div>
                                             </div>
-                                            <div class="time-label">
-                                                <span
-                                                    class="bg-danger">{{ Carbon::parse($dataAbsent->checkout)->locale('id_ID')->isoFormat('HH:mm') }}</span>
-                                            </div>
                                         </div>
-                                    @endif
-                                </div>
-                            @endif
-                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        @if (!$checkout)
+                                            <p class="text-muted text-center">
+                                                Anda Belum Logout.
+                                            </p>
+                                        @else
+                                            <div class="timeline">
+                                                <div>
+                                                    <i class="fas fa-sign-out-alt bg-danger"></i>
+                                                    <div class="timeline-item">
+                                                        <h3 class="timeline-header"><a href="#">Checking Out</a>
+                                                        </h3>
+                                                    </div>
+                                                </div>
+                                                <div class="time-label">
+                                                    <span
+                                                        class="bg-danger">{{ Carbon::parse($dataAbsent->checkout)->locale('id_ID')->isoFormat('HH:mm') }}</span>
+                                                </div>
+                                            </div>
+                                        @endif
+                                    </div>
+                                @endif
+                            </div>
+                        @endif
+                        <!-- /.card-body -->
+
                     </div>
                     <!-- /.card -->
                 </div>
