@@ -19,6 +19,15 @@ class UserAbsent extends Model
     ];
     public $timestamps = false;
 
+    function karyawan()
+    {
+        return $this->belongsTo(Karyawan::class, 'karyawan_id');;
+    }
+    function absenttime()
+    {
+        return $this->belongsTo(AbsenTime::class, 'absenttime_id');
+    }
+
     function getUserAbsentData()
     {
         $data = [];

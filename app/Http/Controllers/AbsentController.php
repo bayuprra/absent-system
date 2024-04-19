@@ -15,7 +15,7 @@ class AbsentController extends Controller
     public function index(Request $request)
     {
         $dataLogin = AbsenTime::where('tanggal', date('Y-m-d'))->first('id');
-        $dataLoginuser = UserAbsent::where('absenttime_id', $dataLogin->id)->where('karyawan_id', session()->get('data')->idKaryawan)->first();
+        $dataLoginuser = UserAbsent::where('absenttime_id', $dataLogin->id)->with('absenttime')->where('karyawan_id', session()->get('data')->idKaryawan)->first();
         $data = array(
             'title'         => "Absent",
             'folder'        => "User",
