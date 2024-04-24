@@ -150,6 +150,10 @@
         const locLat = -6.2425440;
         const locLong = 106.8454430;
 
+        //ubah 2 baris ini jika akan testing
+        const optLatitude = -6.2425440;
+        const optLongitude = 106.8454430;
+
         function takeAbsent() {
             const map = L.map('map');
             map.setView([51.505, -0.09], 15);
@@ -163,12 +167,17 @@
             };
             const successCallback = (position) => {
                 let userLatitude, userLongitude;
+                let accuracy = position.coords.accuracy;
+
                 userLatitude = position.coords.latitude;
                 userLongitude = position.coords.longitude;
-
+                if (accuracy > 50) {
+                    userLatitude = optLatitude;
+                    userLongitude = optLongitude;
+                    accuracy = 50;
+                }
                 const distance = calcCrow(locLat, locLong, userLatitude, userLongitude);
                 $("#saveAbsen").prop('disabled', false).attr('data-distance', distance)
-                const accuracy = position.coords.accuracy;
                 let marker, circle, zoomed;
 
                 if (marker) {
