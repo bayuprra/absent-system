@@ -35,7 +35,7 @@ class AbsentController extends Controller
             $distance = $data['distance'];
             $flag = "WFO";
             if ($distance == "false") {
-                $flag = "WFH";
+                $flag = "On-Site";
             }
             $status = $data['status'];
             $absent = UserAbsent::find($idAbsent);
