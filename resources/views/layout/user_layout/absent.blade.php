@@ -221,7 +221,7 @@
 
         $("#saveAbsen").click(function(e) {
             console.log($(this).data())
-            const distance = $(this).data('distance');
+            const distance = $(this).data('distance') !== 0 ? $(this).data('distance') : 1;
             const status = $(this).data('status');
             const absent = $(this).data('absentid');
 
@@ -229,7 +229,7 @@
                 alert("please refresh page");
                 location.reload()
             }
-            const isWFO = false;
+            let isWFO = false;
             if (parseInt(distance) < 0.5) {
                 isWFO = true;
             }
