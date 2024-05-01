@@ -128,8 +128,12 @@
                     <table id="example1" class="table table-bordered table-striped">
                         <thead>
                             <tr>
-                                <th>No</th>
-                                <th>Nama</th>
+                                <th rowspan="2">No</th>
+                                <th rowspan="2">Nama</th>
+                                <th colspan="{{ $selectedMonth->daysInMonth }}" id="forJudul">
+                                    {{ Carbon::parse($selectedMonth)->locale('id_ID')->isoFormat('MMMM YYYY') }}</th>
+                            </tr>
+                            <tr>
                                 <!-- Header for dates -->
                                 @for ($i = 0; $i < $selectedMonth->daysInMonth; $i++)
                                     @php
@@ -168,9 +172,20 @@
                                             @endphp
                                             @if ($attendance === 'hadir')
                                                 <small class="badge badge-success">{{ $absence['flag'] ?? 'WFO' }}</small>
+                                                <p style="display: none">in:
+                                                    {{ Carbon::parse($absence['checkin'])->locale('id_ID')->isoFormat('H:mm') }}
+                                                </p>
+                                                <p style="display: none">out:
+                                                    @if ($absence['checkout'])
+                                                        {{ Carbon::parse($absence['checkout'])->locale('id_ID')->isoFormat('H:mm') }}
+                                                    @else
+                                                        -
+                                                    @endif
+                                                </p>
                                             @elseif ($attendance === '-')
                                                 -
                                             @else
+                                                <p style="display: none">x</p>
                                                 <small class="badge badge-danger"><i
                                                         class="fas fa-times-circle"></i></small>
                                             @endif
@@ -207,17 +222,17 @@
                                 pageSize: 'A4',
                                 customize: function(doc) {
                                     doc.content.forEach(function(content) {
+                                        if (content.style === 'title') {
+                                            content.text +=
+                                                ` ${$('#forJudul').text()}`
+                                        }
                                         if (content.table) {
                                             content.table.body.forEach(function(row) {
                                                 row.forEach(function(cell) {
                                                     switch (cell.text) {
-                                                        case "hadir":
+                                                        case "x":
                                                             cell.text =
-                                                                'hadir';
-                                                            break;
-                                                        case "noHadir":
-                                                            cell.text =
-                                                                'tidak hadir';
+                                                                'x';
                                                             break;
                                                     }
                                                 });
