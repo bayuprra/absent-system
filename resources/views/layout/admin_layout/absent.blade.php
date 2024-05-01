@@ -3,6 +3,13 @@
     $endDateThisMonth = intval(Carbon::now()->endOfMonth()->format('d')) ?? 31;
 @endphp
 @extends('layout.main_layout.main')
+@section('style')
+    <style>
+        .select2-container .select2-selection--single {
+            height: auto;
+        }
+    </style>
+@endSection
 @section('content')
     <section class="content">
         <div class="container-fluid">
@@ -29,10 +36,11 @@
                             {{ $errors->first('username') }}
                         </div>
                     @endif
+
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
-                    <table id="example1" class="table table-bordered table-striped">
+                    {{-- <table id="example1" class="table table-bordered table-striped">
                         <thead>
                             <tr>
                                 <th rowspan="2">No</th>
@@ -105,8 +113,89 @@
                                 </tr>
                             @endforeach
                         </tbody>
-                    </table>
+                    </table> --}}
+                    <form id="filterForm" action="{{ route('absentData') }}" method="GET" class="mb-3">
+                        <select name="month" id="monthSelect" class="form-control select2" style="width: 20%;height:auto">
+                            @foreach ($months as $month)
+                                <option value="{{ $month->format('Y-m') }}"
+                                    {{ $selectedMonth->format('Y-m') == $month->format('Y-m') ? 'selected' : '' }}>
+                                    {{ $month->isoFormat('MMMM YYYY') }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <button type="submit" hidden>Filter</button>
+                    </form>
+                    <table id="example1" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th rowspan="2">No</th>
+                                <th rowspan="2">Nama</th>
+                                <th colspan="{{ $selectedMonth->daysInMonth }}" id="forJudul">
+                                    {{ Carbon::parse($selectedMonth)->locale('id_ID')->isoFormat('MMMM YYYY') }}</th>
+                            </tr>
+                            <tr>
+                                <!-- Header for dates -->
+                                @for ($i = 0; $i < $selectedMonth->daysInMonth; $i++)
+                                    @php
+                                        $date = $selectedMonth->copy()->startOfMonth()->addDays($i);
+                                        $isWeekend = in_array($date->dayOfWeek, [Carbon::SATURDAY, Carbon::SUNDAY]);
+                                    @endphp
+                                    <th class="{{ $isWeekend ? 'bg-danger' : '' }}">{{ $date->format('d') }}</th>
+                                @endfor
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Table rows for absent data -->
+                            @foreach ($data as $nama => $absences)
+                                <tr>
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $nama }}</td>
+                                    @for ($i = 0; $i < $selectedMonth->daysInMonth; $i++)
+                                        <td>
+                                            @php
+                                                $dateIter = $selectedMonth->copy()->startOfMonth()->addDays($i);
+                                                $attendance = null;
+                                                if ($dateIter->isFuture()) {
+                                                    $attendance = '-';
+                                                } else {
+                                                    foreach ($absences as $absence) {
+                                                        $absenceDate = Carbon::parse($absence['tanggalAbsent']);
+                                                        if (
+                                                            $dateIter->eq($absenceDate) &&
+                                                            $absence['checkin'] != null
+                                                        ) {
+                                                            $attendance = 'hadir';
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                            @endphp
+                                            @if ($attendance === 'hadir')
+                                                <small class="badge badge-success">{{ $absence['flag'] ?? 'WFO' }}</small>
+                                                <p style="display: none">in:
+                                                    {{ Carbon::parse($absence['checkin'])->locale('id_ID')->isoFormat('H:mm') }}
+                                                </p>
+                                                <p style="display: none">out:
+                                                    @if ($absence['checkout'])
+                                                        {{ Carbon::parse($absence['checkout'])->locale('id_ID')->isoFormat('H:mm') }}
+                                                    @else
+                                                        -
+                                                    @endif
+                                                </p>
+                                            @elseif ($attendance === '-')
+                                                -
+                                            @else
+                                                <p style="display: none">x</p>
+                                                <small class="badge badge-danger"><i
+                                                        class="fas fa-times-circle"></i></small>
+                                            @endif
+                                        </td>
+                                    @endfor
 
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
                 <!-- /.card-body -->
             </div>
@@ -117,79 +206,59 @@
 @section('script')
     <script>
         $(function() {
-            $("#example1").DataTable({
+            // Inisialisasi DataTables
+            var table = $("#example1").DataTable({
                 "responsive": false,
                 "scrollX": true,
                 "autoWidth": false,
                 "lengthChange": false,
                 "buttons": [{
-                    text: 'Export',
-                    className: 'filter-dropdown',
-                    extend: 'collection',
-                    buttons: [
-                        // {
-                        //     extend: 'excel',
-                        //     customize: function(xlsx) {
-                        //         var sheet = xlsx.xl.worksheets['sheet1.xml'];
-                        //         $('row c', sheet).each(function() {
-                        //             var originalText = $(this).text();
-                        //             switch (originalText) {
-                        //                 case "hadir":
-                        //                     $(this).text('hadir');
-                        //                     $(this).attr('t',
-                        //                         's'
-                        //                     );
-                        //                     break;
-                        //                 case "noHadir":
-                        //                     $(this).text('tidak hadir');
-                        //                     $(this).attr('t',
-                        //                         's'
-                        //                     );
-                        //                     break;
-                        //             }
-                        //         });
-                        //     }
-                        // },    
-                        {
-                            extend: 'pdf',
-                            orientation: 'landscape',
-                            pageSize: 'A4',
-                            customize: function(doc) {
-                                doc.content.forEach(function(content) {
-                                    if (content.table) {
-                                        content.table.body.forEach(function(row) {
-                                            row.forEach(function(cell) {
-                                                switch (cell
-                                                    .text) {
-                                                    case "hadir":
-                                                        cell.text =
-                                                            'hadir'
-                                                        break
-                                                    case "noHadir":
-                                                        cell.text =
-                                                            'tidak hadir'
-                                                        break
-                                                }
+                        text: 'Export',
+                        className: 'filter-dropdown',
+                        extend: 'collection',
+                        buttons: [{
+                                extend: 'pdf',
+                                orientation: 'landscape',
+                                pageSize: 'A4',
+                                customize: function(doc) {
+                                    doc.content.forEach(function(content) {
+                                        if (content.style === 'title') {
+                                            content.text +=
+                                                ` ${$('#forJudul').text()}`
+                                        }
+                                        if (content.table) {
+                                            content.table.body.forEach(function(row) {
+                                                row.forEach(function(cell) {
+                                                    switch (cell.text) {
+                                                        case "x":
+                                                            cell.text =
+                                                                'x';
+                                                            break;
+                                                    }
+                                                });
                                             });
-                                        });
-                                    }
-                                });
+                                        }
+                                    });
+                                }
+                            },
+                            {
+                                extend: 'print',
+                                customize: function(win) {
+                                    $(win.document.body).find('table').addClass('display').css(
+                                        'font-size', '12px');
+                                    $(win.document.body).find('tr').addClass('trClass');
+                                    $(win.document.body).find('td').addClass('tdClass');
+                                }
                             }
-                        },
-                        {
-                            extend: 'print',
-                            customize: function(win) {
-                                $(win.document.body).find('table').addClass('display').css(
-                                    'font-size', '12px');
-                                $(win.document.body).find('tr').addClass('trClass');
-                                $(win.document.body).find('td').addClass('tdClass');
-                            }
-                        }
-                    ]
-                }]
+                        ]
+                    },
+
+                ]
             }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
 
-
+            $('#monthSelect').on('change', function(e) {
+                $('#filterForm').submit()
+            })
         });
     </script>
 @endSection

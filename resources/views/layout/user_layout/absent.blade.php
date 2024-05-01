@@ -221,7 +221,7 @@
 
         $("#saveAbsen").click(function(e) {
             console.log($(this).data())
-            const distance = $(this).data('distance') !== 0 ? $(this).data('distance') : 1;
+            const distance = $(this).data('distance') !== 0 ? $(this).data('distance') : 1;
             const status = $(this).data('status');
             const absent = $(this).data('absentid');
 

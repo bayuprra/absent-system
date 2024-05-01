@@ -15,17 +15,17 @@ class DashboardController extends Controller
     {
         $today = Carbon::today()->toDateString();
         $idAbsentDate = AbsenTime::where('tanggal', $today)->where('status', 0)->first('id');
-        $dataUserAbsent = UserAbsent::where('absenttime_id', $idAbsentDate->id)->with('karyawan')->get();
+        $dataUserAbsent = UserAbsent::where('absenttime_id', $idAbsentDate->id ?? 1)->with('karyawan')->get();
         $countTodayAbsent = $dataUserAbsent->count();
         $countUserCheckin = $dataUserAbsent->whereNotNull('checkin')->count();
         $countUserCheckout = $dataUserAbsent->whereNotNull('checkout')->count();
         $countUserCheckinPercentage = intval($countUserCheckin / $countTodayAbsent * 100);
         $countUserCheckoutPercentage = intval($countUserCheckout / $countTodayAbsent * 100);
 
-        $firstUserCheckin = UserAbsent::where('absenttime_id', $idAbsentDate->id)->with('karyawan')->whereNotNull('checkin')->orderBy('checkin', 'ASC')->first();
-        $firstUserCheckout = UserAbsent::where('absenttime_id', $idAbsentDate->id)->with('karyawan')->whereNotNull('checkout')->orderBy('checkout', 'ASC')->first();
-        $lastUserCheckin = UserAbsent::where('absenttime_id', $idAbsentDate->id)->with('karyawan')->whereNotNull('checkin')->orderBy('checkin', 'DESC')->first();
-        $lastUserCheckout = UserAbsent::where('absenttime_id', $idAbsentDate->id)->with('karyawan')->whereNotNull('checkout')->orderBy('checkout', 'DESC')->first();
+        $firstUserCheckin = UserAbsent::where('absenttime_id', $idAbsentDate->id ?? 1)->with('karyawan')->whereNotNull('checkin')->orderBy('checkin', 'ASC')->first();
+        $firstUserCheckout = UserAbsent::where('absenttime_id', $idAbsentDate->id ?? 1)->with('karyawan')->whereNotNull('checkout')->orderBy('checkout', 'ASC')->first();
+        $lastUserCheckin = UserAbsent::where('absenttime_id', $idAbsentDate->id ?? 1)->with('karyawan')->whereNotNull('checkin')->orderBy('checkin', 'DESC')->first();
+        $lastUserCheckout = UserAbsent::where('absenttime_id', $idAbsentDate->id ?? 1)->with('karyawan')->whereNotNull('checkout')->orderBy('checkout', 'DESC')->first();
         $dataDashboard = array(
             'countTodayAbsent'              => $countTodayAbsent ?? null,
             'countUserCheckin'              => $countUserCheckin ?? null,
