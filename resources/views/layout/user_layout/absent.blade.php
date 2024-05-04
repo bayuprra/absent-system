@@ -50,8 +50,7 @@
                                 </div>
 
                                 <div class="col-6"><a class="btn btn-app btn-block {{ $checkout ? 'bg-secondary' : '' }}"
-                                        {!! $checkout ? 'style="cursor:no-drop;pointer-events: none;"' : '' !!} data-toggle="modal" data-target="#modal-add" id="checkout"
-                                        {!! $checkin == false ? 'style="cursor:no-drop;pointer-events: none;"' : '' !!}>
+                                        {!! $checkout ? 'style="cursor:no-drop;pointer-events: none;"' : '' !!} data-toggle="modal" id="checkout" {!! $checkin == false ? 'style="cursor:no-drop;pointer-events: none;"' : '' !!}>
                                         <i class="far fa-calendar-check"></i> Checking Out
                                     </a></div>
                             </div>
@@ -66,8 +65,8 @@
                                     <div class="col-6">
                                         <div class="timeline">
                                             <div class="time-label">
-                                                <span
-                                                    class="bg-success">{{ Carbon::parse($dataAbsent->checkin)->locale('id_ID')->isoFormat('HH:mm') }}</span>
+                                                <span class="bg-success" id="dateIn"
+                                                    data-date="{{ $dataAbsent->checkin ?? 0 }}">{{ Carbon::parse($dataAbsent->checkin)->locale('id_ID')->isoFormat('HH:mm') }}</span>
                                             </div>
                                             <div>
                                                 <i class="fas fa-sign-in-alt bg-success"></i>
@@ -171,13 +170,14 @@
 
                 userLatitude = position.coords.latitude;
                 userLongitude = position.coords.longitude;
-                if (accuracy > 50) {
+                if (accuracy > 500) {
                     userLatitude = optLatitude;
                     userLongitude = optLongitude;
                     accuracy = 50;
                 }
                 const distance = calcCrow(locLat, locLong, userLatitude, userLongitude);
-                $("#saveAbsen").prop('disabled', false).attr('data-distance', distance)
+                $("#saveAbsen").prop('disabled', false).attr('data-distance', distance).attr('data-latitude',
+                    userLatitude).attr('data-longitude', userLongitude)
                 let marker, circle, zoomed;
 
                 if (marker) {
@@ -222,6 +222,8 @@
         $("#saveAbsen").click(function(e) {
             console.log($(this).data())
             const distance = $(this).data('distance') !== 0 ? $(this).data('distance') : 1;
+            const longitude = $(this).data('longitude') !== 0 ? $(this).data('longitude') : 1;
+            const latitude = $(this).data('latitude') !== 0 ? $(this).data('latitude') : 1;
             const status = $(this).data('status');
             const absent = $(this).data('absentid');
 
@@ -236,6 +238,8 @@
             const dataAbsent = {
                 id: parseInt(absent),
                 status: status,
+                latitude: latitude,
+                longitude: longitude,
                 distance: isWFO
             }
 
@@ -285,6 +289,23 @@
             $("#saveAbsen").attr('data-status', 'in')
         })
         $("#checkout").click(function(e) {
+            const hoursIn = $('#dateIn').data('date');
+            if (hoursIn === 0) {
+                return
+            }
+            let oldDate = new Date(hoursIn);
+            let hour = oldDate.getHours();
+            let newDate = oldDate.setHours(hour + 8);
+            const eightHour = new Date(newDate);
+            const now = new Date();
+            if (now < eightHour) {
+                return Swal.fire({
+                    title: "You Can Checkout After 8 Hours Work!",
+                    text: ":)",
+                    icon: "question"
+                });
+            }
+            $("#modal-add").modal('show')
             $("#saveAbsen").attr('data-status', 'out')
         })
     </script>

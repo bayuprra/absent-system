@@ -8,15 +8,6 @@ use carbon\Carbon;
 
 class AbsentDataController extends Controller
 {
-    // public function index()
-    // {
-    //     $data = [
-    //         'title'         => "Data Absent",
-    //         'folder'        => "Home",
-    //         'data'          => $this->userAbsent->getUserAbsentData()
-    //     ];
-    //     return view('layout/admin_layout/absent', $data);
-    // }
     public function index(Request $request)
     {
         $selectedMonth = $request->input('month') ? Carbon::parse($request->input('month')) : Carbon::now();
@@ -25,14 +16,27 @@ class AbsentDataController extends Controller
             'title'         => "Data Absent",
             'folder'        => "Home",
             'selectedMonth' => $selectedMonth,
-            'data'          => $this->userAbsent->getUserAbsentData($selectedMonth),
+            'data'          => $this->userAbsent->getUserAbsentData(),
             'months'        => $this->generateMonthOptions()
         ];
 
         return view('layout/admin_layout/absent', $data);
     }
 
-    // Helper function to generate month options for select dropdown
+    public function userAbsentData(Request $request)
+    {
+        $selectedMonth = $request->input('month') ? Carbon::parse($request->input('month')) : Carbon::now();
+
+        $data = [
+            'title'         => "Data Absent",
+            'folder'        => "Home",
+            'selectedMonth' => $selectedMonth,
+            'data'          => $this->userAbsent->getUserAbsentData(),
+            'months'        => $this->generateMonthOptions()
+        ];
+        return view('layout/user_layout/data_absent', $data);
+    }
+
     private function generateMonthOptions()
     {
         $months = [];

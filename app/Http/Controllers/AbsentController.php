@@ -33,6 +33,8 @@ class AbsentController extends Controller
             $data = $request->input('data');
             $idAbsent = $data['id'];
             $distance = $data['distance'];
+            $latitude = $data['latitude'];
+            $longitude = $data['longitude'];
             $flag = "WFO";
             if ($distance == "false") {
                 $flag = "On-Site";
@@ -45,6 +47,8 @@ class AbsentController extends Controller
                 $absent->checkout = $time;
             }
             $absent->flag = $flag;
+            $absent->latitude = $latitude;
+            $absent->longitude = $longitude;
             $absent->save();
             return response()->json([
                 'success' => true,

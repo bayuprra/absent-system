@@ -60,4 +60,5 @@ Route::get('/verifyUser', function () {
 
 Route::controller(AbsentDataController::class)->middleware('auth')->group(function () {
     Route::get('/absentData', 'index')->name('absentData');
+    Route::get('/userAbsentData', 'userAbsentData')->name('userAbsentData');
 });

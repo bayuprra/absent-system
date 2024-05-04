@@ -16,6 +16,16 @@
             </div>
         </div>
 
+        <div class="user-panel mx-auto">
+            @php
+                use Carbon\Carbon;
+            @endphp
+            <div class="info">
+                <a href="#"
+                    class="d-block">{{ Carbon::parse(now())->locale('id_ID')->isoFormat('dddd, D MMMM YYYY | H:mm') }}</a>
+            </div>
+        </div>
+
         <!-- Sidebar Menu -->
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
@@ -62,6 +72,14 @@
                             <i class="nav-icon fas fa-user-alt"></i>
                             <p>
                                 Absensi
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('userAbsentData') }}" class="nav-link">
+                            <i class="nav-icon fas fa-history"></i>
+                            <p>
+                                Riwayat Absensi
                             </p>
                         </a>
                     </li>

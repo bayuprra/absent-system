@@ -1,6 +1,9 @@
 @php
     use Carbon\Carbon;
     $endDateThisMonth = intval(Carbon::now()->endOfMonth()->format('d')) ?? 31;
+    $sessionData = session()->get('data');
+    $idKaryawan = $sessionData->idKaryawan ?? '';
+    $idAkun = $sessionData->id ?? '';
 @endphp
 @extends('layout.main_layout.main')
 @section('style')
@@ -40,7 +43,7 @@
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
-                    <form id="filterForm" action="{{ route('absentData') }}" method="GET" class="mb-3">
+                    <form id="filterForm" action="{{ route('userAbsentData') }}" method="GET" class="mb-3">
                         <select name="month" id="monthSelect" class="form-control select2" style="width: 20%;height:auto">
                             @foreach ($months as $month)
                                 <option value="{{ $month->format('Y-m') }}"
@@ -54,7 +57,6 @@
                     <table id="example1" class="table table-bordered table-striped">
                         <thead>
                             <tr>
-                                <th rowspan="2">No</th>
                                 <th rowspan="2">Nama</th>
                                 <th colspan="{{ $selectedMonth->daysInMonth }}" id="forJudul">
                                     {{ Carbon::parse($selectedMonth)->locale('id_ID')->isoFormat('MMMM YYYY') }}</th>
@@ -76,57 +78,59 @@
                                 @php
                                     $base = explode('&&', $nama);
                                     $realName = $base[0];
+                                    $idNama = $base[1];
                                 @endphp
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $realName }}</td>
-                                    @for ($i = 0; $i < $selectedMonth->daysInMonth; $i++)
-                                        <td>
-                                            @php
-                                                $dateIter = $selectedMonth->copy()->startOfMonth()->addDays($i);
-                                                $attendance = null;
-                                                $idUserAbsent = null;
-                                                if ($dateIter->isFuture()) {
-                                                    $attendance = '-';
-                                                } else {
-                                                    foreach ($absences as $absence) {
-                                                        $absenceDate = Carbon::parse($absence['tanggalAbsent']);
-                                                        if (
-                                                            $dateIter->eq($absenceDate) &&
-                                                            $absence['checkin'] != null
-                                                        ) {
-                                                            $attendance = 'hadir';
-                                                            $idUserAbsent = $absence['id'];
-                                                            break;
+                                @if ($idNama == $idKaryawan)
+                                    <tr>
+                                        <td>{{ $realName }}</td>
+                                        @for ($i = 0; $i < $selectedMonth->daysInMonth; $i++)
+                                            <td>
+                                                @php
+                                                    $dateIter = $selectedMonth->copy()->startOfMonth()->addDays($i);
+                                                    $attendance = null;
+                                                    $idUserAbsent = null;
+                                                    if ($dateIter->isFuture()) {
+                                                        $attendance = '-';
+                                                    } else {
+                                                        foreach ($absences as $absence) {
+                                                            $absenceDate = Carbon::parse($absence['tanggalAbsent']);
+                                                            if (
+                                                                $dateIter->eq($absenceDate) &&
+                                                                $absence['checkin'] != null
+                                                            ) {
+                                                                $attendance = 'hadir';
+                                                                $idUserAbsent = $absence['id'];
+                                                                break;
+                                                            }
                                                         }
                                                     }
-                                                }
-                                            @endphp
-                                            @if ($attendance === 'hadir')
-                                                <a href="#" data-toggle="modal"
-                                                    data-target="#modal-detail-{{ $idUserAbsent }}"><small
-                                                        class="badge badge-success">{{ $absence['flag'] ?? 'WFO' }}</small></a>
-                                                <p style="display: none">in:
-                                                    {{ Carbon::parse($absence['checkin'])->locale('id_ID')->isoFormat('H:mm') }}
-                                                </p>
-                                                <p style="display: none">out:
-                                                    @if ($absence['checkout'])
-                                                        {{ Carbon::parse($absence['checkout'])->locale('id_ID')->isoFormat('H:mm') }}
-                                                    @else
-                                                        -
-                                                    @endif
-                                                </p>
-                                            @elseif ($attendance === '-')
-                                                -
-                                            @else
-                                                <p style="display: none">x</p>
-                                                <small class="badge badge-danger"><i
-                                                        class="fas fa-times-circle"></i></small>
-                                            @endif
-                                        </td>
-                                    @endfor
+                                                @endphp
+                                                @if ($attendance === 'hadir')
+                                                    <a href="#" data-toggle="modal"
+                                                        data-target="#modal-detail-{{ $idUserAbsent }}"><small
+                                                            class="badge badge-success">{{ $absence['flag'] ?? 'WFO' }}</small></a>
+                                                    <p style="display: none">in:
+                                                        {{ Carbon::parse($absence['checkin'])->locale('id_ID')->isoFormat('H:mm') }}
+                                                    </p>
+                                                    <p style="display: none">out:
+                                                        @if ($absence['checkout'])
+                                                            {{ Carbon::parse($absence['checkout'])->locale('id_ID')->isoFormat('H:mm') }}
+                                                        @else
+                                                            -
+                                                        @endif
+                                                    </p>
+                                                @elseif ($attendance === '-')
+                                                    -
+                                                @else
+                                                    <p style="display: none">x</p>
+                                                    <small class="badge badge-danger"><i
+                                                            class="fas fa-times-circle"></i></small>
+                                                @endif
+                                            </td>
+                                        @endfor
 
-                                </tr>
+                                    </tr>
+                                @endif
                             @endforeach
                         </tbody>
                     </table>

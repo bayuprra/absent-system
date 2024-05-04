@@ -15,6 +15,8 @@ class UserAbsent extends Model
         'absenttime_id',
         'checkin',
         'checkout',
+        'latitude',
+        'longitude',
         'flag'
     ];
     public $timestamps = false;
@@ -38,21 +40,25 @@ class UserAbsent extends Model
             $userAbsentData = DB::table('userAbsent as u')
                 ->join('absentTime as a', 'a.id', '=', 'u.absenttime_id')
                 ->where('u.karyawan_id', $karyawan->id)
-                ->select('a.tanggal as tanggalAbsent', 'u.checkin', 'u.checkout', 'u.flag')
+                ->select('a.tanggal as tanggalAbsent', 'u.id', 'u.checkin', 'u.checkout', 'u.flag', 'u.latitude', 'u.longitude', 'u.karyawan_id')
                 ->get();
 
             $absences = [];
 
             foreach ($userAbsentData as $absentRecord) {
                 $absences[] = [
+                    'id' => $absentRecord->id,
                     'tanggalAbsent' => $absentRecord->tanggalAbsent,
                     'checkin' => $absentRecord->checkin,
                     'checkout' => $absentRecord->checkout,
-                    'flag' => $absentRecord->flag
+                    'latitude' => $absentRecord->latitude,
+                    'longitude' => $absentRecord->longitude,
+                    'flag' => $absentRecord->flag,
+                    'karyawan_id' => $absentRecord->karyawan_id
                 ];
             }
 
-            $data[$karyawan->nama] = $absences;
+            $data[$karyawan->nama . '&&' . $karyawan->id] = $absences;
         }
         return $data;
     }

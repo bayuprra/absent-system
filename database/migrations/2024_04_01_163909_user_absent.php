@@ -23,6 +23,8 @@ class UserAbsent extends Migration
                 ->onDelete('cascade');
             $table->dateTime('checkin')->nullable();
             $table->dateTime('checkout')->nullable();
+            $table->text('latitude')->nullable();
+            $table->text('longitude')->nullable();
             $table->string('flag')->nullable();
             $table->timestamps();
         });
