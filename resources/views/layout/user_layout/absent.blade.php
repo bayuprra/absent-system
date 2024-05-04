@@ -149,9 +149,9 @@
         const locLat = -6.2425440;
         const locLong = 106.8454430;
 
-        //ubah 2 baris ini jika akan testing
-        const optLatitude = -6.2425440;
-        const optLongitude = 106.8454430;
+        //ubah 2 baris ini jika akan testing -6.2429132416134046, 106.8450522665004
+        const optLatitude = -6.2429132416134046;
+        const optLongitude = 106.8450522665004;
 
         function takeAbsent() {
             const map = L.map('map');
